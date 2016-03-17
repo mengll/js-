@@ -1,0 +1,176 @@
+/*
+语法分析,
+
+分析3样东西
+
+第1步: 先分析参数
+第2步: 再分析变量声明
+第3步: 分析函数声明
+
+一个函数能使用的局部变量,就从上面的3步分析而来
+
+
+具体步骤:
+
+0: 函数运行前的1瞬间, 生成 Active Object (活动对象),下称AO 生成活动对象
+1:
+   1.1 函数声明的参数,形成AO的属性,值全是undefined,
+   1.2 接收实参,形成AO相应的属性的值
+
+2: 分析变量声明声明声明! 如 var age, 
+   如果AO上还没有age属性,则添加AO属性,值是undefined
+   如果AO上已经有age属性,则不做任何影响
+
+
+3: 分析函数声明,如 function foo() {},
+则把函数赋给AO.foo属性
+注: 如果此前foo属性已存在,则被无情的覆盖了
+*/
+
+
+
+function t(age) {
+    alert(age);
+}
+
+t(5); // 5
+t();//   undefined
+/*
+词法分析过程:
+AO {age:undefined}
+
+运行过程:
+t(5)--> AO.age=5; alert(AO.age); //5
+
+t() ---> AO.age没得到赋值, 还是undefined
+*/
+
+
+
+function t2(age) {
+    var age = 99;
+    alert(age);
+}
+
+t2(5);
+/*
+分析过程:
+
+0: 形成AO = {}
+1:
+   1.1 分析形参 AO = {age:undefined}
+   1.2 接收形参 AO = {age:5}
+
+2: 分析var age, 发现AO已有age属性,不做任何影响
+
+
+执行过程:
+AO.age = 99;
+alert(age);
+*/
+
+
+
+function t3(greet) {
+    var greet ; // 试着把这一句变成 var greet;再做分析
+    alert(greet);
+
+    function greet() {
+    }
+
+    alert(greet);
+}
+
+t3(null);  // hello hello
+
+/*
+词法分析过程:
+0: AO = {}
+1:
+   1.1 分析参数 AO = {greet:undefined}
+   1.2 分析参数 AO = {greet:null}
+2: 分析greet变量声明,AO已经有greet属性,因此不做任何影响
+3: 分析greet函数声明, AO.greet = function() {} , 被覆盖成函数 函数的覆盖的过程
+ 
+执行过程:
+greet = 'hello'; 执行的过程 中心的复制的操作的实现
+alert(greet);
+alert(greet);
+*/   
+
+
+
+
+
+
+// 再看这道题
+
+function a(b) {
+   alert(b);
+   function b(){
+        alert (b);
+    }
+    b();
+}
+
+a(1);
+
+/*
+
+分析期:
+0: AO = {}
+1: 
+   1.1分析参数 AO = {b:undefined}
+   1.2接收参数  AO = {b:1}
+
+2: 分析var 声明,此函数没有var
+
+3: 分析函数声明, AO = {b: function(){alert(b);}}
+
+执行期:
+alert(b);  // function
+b();       // 由作用域寻找到a函数中的b,即 function,alert()出来   
+
+*/
+
+
+
+function a(b) {
+   alert(b);
+   b = function (){
+        alert (b);
+   }
+   
+   b();
+}
+
+a(1);
+
+/*
+学员常见答案:
+1,1
+1, function
+1, undefined
+function ,function 
+*/
+
+
+/*
+词法分析过程:
+0: AO = {}
+1: 分析参数 AO = {b:undefined} --> {b:1}
+2: 分析var声明,没有.
+3: 分析函数声明??  没有!
+
+(注: b = function() {} ,是一个赋值过程,在执行期才有用)
+ 
+执行过程:
+alert(b); // 1
+b = function() {
+    alert(b);
+}
+b();  // function
+
+*/
+
+
