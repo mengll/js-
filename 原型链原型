@@ -1,0 +1,13 @@
+1，原型是js创建的对象的属性，指向的试试原型对象
+例如 function ShowType(){
+
+}
+
+//创建一个父类的对象的操作
+function Car(){
+
+}
+ShowType.protype = new Car();
+
+var obj = new ShowType();
+obj.__proto__ == ShowType.protype 都指向的是Car这个的对象
