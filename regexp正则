@@ -1,0 +1,20 @@
+1.javascript 正则表达式
+ \s 空格 \S 非空格 \w字符 \W非字符 \d 数字\D 非数字 
+ 
+ 2正则函数
+  var regx = '/\w+/';
+  var str = "zhangsanfenghaishi zhang xue liang ne hai shi bie de qi ta ren ne wo hai mei you xiang ming bai !ni dong de ";
+  
+  str.replace(reg,function($so){
+    var index = $so.length;
+    console.log($so);
+  });
+  
+  3.去除前后的空格的操作的方法
+  
+  function trims($str){ 
+    var regexp = "/^\s*|\s*$/";
+    return $str.replace(regexp,'');
+  }
+
+  
