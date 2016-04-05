@@ -1,0 +1,30 @@
+function checkImgPX(ev,width,height,pp){
+       // var fimg=$('#'+ids);
+	var img=new Image();
+        var f=ev.target.files[0];
+        if(f.type.match('image.*')){
+                var r = new FileReader();
+                r.onload = function(e){
+                        img.setAttribute('src',e.target.result);
+            };
+                r.readAsDataURL(f);
+        }   
+	img.onload=function(){
+		ih=img.height,iw=img.width;
+                if(ih ==height && iw == width){
+                           var uploadUrl = "{:U('HomeBanner/uploadBanner')}";
+                                discoverObj.upload(uploadUrl,"#toper_url","#topheader_url",function(istype,res){
+                                    //回调函数
+                                    switch(istype){
+                                   
+                                        case 1 :  console.log("成功"); $("#topersuer").show(); break; //成功
+                                        default: console.log("失败");   break; //失败
+                                    }
+                                }); //动态的复制更新的内容表的实现
+                }else{
+                      alert("图的尺寸应该是" + width + "x"+ height);  
+                      return false;
+                }
+	
+	}
+} 
