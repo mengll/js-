@@ -1,0 +1,14 @@
+1.闭包的概念
+      当前的函数能够并访问所在的词法作用域，就产生了闭包，即使函数是当前词法作用域之外使用
+      
+      function foo(){
+          var name ="mengll";
+          return function(){
+            var bb = name;
+            console.log(bb);
+          };
+      }
+    
+    必须是当前的词法作用域之外执行
+      
+      
