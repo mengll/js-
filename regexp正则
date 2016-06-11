@@ -16,5 +16,60 @@
     var regexp = "/^\s*|\s*$/";
     return $str.replace(regexp,'');
   }
+  
+  
+  /**
+ * Created by liuwendan on 16/6/11.
+ */
+"use strict"
+
+var s = "zh zheng ze haoh hao de xiang guan de shixiang danshi haiyoiu ";
+
+var z = /\b\w+(?=ng\b)/g; //查询的是正则前面的的匹配的文本
+
+function l(info){
+    console.log(info);
+}
+
+//var v = s.match(z);
+
+//l(v); //[ 'zhe', 'xia', 'shixia' ]
+//var sc = /(?<=zh)\w+\b/;
+//RegExp('\bzh\w+\b');
+var rege = new RegExp('\\w+(?=oh\\b)','g'); // RegExp('(?<=\bzh)\w+\b') 关键是还要取前面的正则
+
+l(s.match(rege));///[ 'ha' ] 正则后结果
+
+//2 逆序肯定环视 领宽度正回顾后发断言 又称逆序坑定肯定环视 断言自身出现的问题的前面能匹配正则表达式 exp 如 re 开头的单词的后半部分 除了re以外的部分
+// (?<=\bre)\w+\b  下面的字符串 reading a book  能匹配到的字符是adming
+//
+//如果在很长的字符串三个字符串之间加
+
+//顺序否定环视
+
+//领宽度负预测先行断言,又称顺序否定环视 此断言位置的后面不能匹配表达式
+//匹配三个数字,后面出现的不是数字
+var zc = /\d{3}(?!\d)/;
+//匹配不包含连续字符串ABC的单词
+var sh = /\b(?!abc\w)+\b/;
+
+var shs = "cut"; //断言此位置的后面不能匹配表达式 exp
+
+var zz = /c(?![au]t\b)\w+/;
+var sda = /c(?![au])t/
+
+l(zz.test(shs));
+
+// 一个字符串中只能包含数字和字符串,并且二者都必须存在
+var sf = "wwwww#2222";
+var hsd = /(^\d+(?=\w+)[a-zA-Z]+\w+$)|(^[a-zA-Z]+(?=\d+)\d+\w+$)/;
+
+//只能是字符串和数字
+
+l(sf.match(hsd))
+l(hsd.test(sf));
+
+
+
 
   
