@@ -14,3 +14,251 @@
 2.this 绑定的内容的实现
 
 箭头函数的绑定的时候，会绑定到调用时候的foo ，箭头函数的绑定是不能修改的！
+
+
+// 再看 函数的作用域取决于声明时,而非调用时 函数的作用域是取决于在什么时候定义，而非在什么时候调用
+
+function closure() {
+    var sister = '大桃花';
+
+    var me = function () {
+        alert(sister);
+    }
+
+    return me;
+}
+
+
+function place() {
+    var sister = '大福晋';
+
+    var girl = closure();
+
+    girl();
+}
+
+
+place(); //函数的作用域是和函数声明的位置有相关的关联，和函数的调用的位置没啥关系 输出的是大桃花
+
+
+/*
+闭包计数器
+多个人开发js程序, 需要一个全局的计数器
+--多个人的函数共同用一个计数器,计数器一直增长
+
+
+解决办法:
+1: 设立一个全局变量
+window.cnt = 0;
+调用 ++window.cnt;
+
+这个办法可行,
+但是,污染了全部变量.
+其次,引入了多人的js程序,别人的程序里,也有一个window.cnt = 'hello';
+
+该计数器就损坏了.(所以要尽量避免用全局变量)
+
+
+2: 闭包维护一个别人污染不到的变量,做计数器
+*/
+
+
+/*
+function counter() {
+    var cnt = 0;  // 当counter执行完毕后,除了返回的cnter函数,谁也别想碰到cnt变量了.
+
+    var cnter = function () {
+        return ++cnt;
+    }
+
+    return cnter;
+}
+
+var inc = counter();
+
+alert(inc());
+alert(inc());
+alert(inc());
+*/
+
+
+// 第2版简化
+/*
+var cnt = (function () {
+    var cnt = 0;
+    return function() {
+        return ++cnt;
+    }
+})(); //闭包的形式返回当前的对象 function (){
+      var bum = 0;
+      return function(){
+          bum++;
+    }
+
+}
+
+var bun = (function(){
+    var bbs = "fujadsa";
+      return function(){
+          console.log('w');
+    }
+})();
+
+
+
+alert(cnt());
+alert(cnt());
+alert(cnt());
+*/
+
+/*
+疑问: cnt不依然是全局变量吗?
+第3版 ---在工作中,一般如何避免全局污染或冲突
+
+1:统一放在一个全局对象上,如jquery->$
+2:每人用自己的命名空间.
+*/
+
+// jquery的计数器插件形式
+$ = {};
+$.cnt = (function () {
+    var cnt = 0;
+    return function() {
+        return ++cnt;
+    }
+})();
+
+alert($.cnt());
+alert($.cnt());
+alert($.cnt());
+
+//函数声明的所有的对象的内容放在一个地方处理的时候，方便轻松的处理结果集的实现的方式和相关的方法
+
+
+
+
+// 个人命名空间,在团队开发中也很常见
+// 其实就是把自己的变量,函数,都放在一个对象里.管理团队的实现的方式和最佳的
+var Y18 = {};  // 跟团队说清,这是我的空间,别人不要用了
+Y18.cnt = (function () {
+    var cnt = 0;
+    return function() {
+        return ++cnt;
+    }
+})();
+
+alert(Y18.cnt());
+alert(Y18.cnt());
+
+//创建自己的命名空间的实现的方法
+var Kfunc = {};
+
+Kfunc.cnt = (function(){
+      var bjs = 1;
+      return function(){
+          console.log(bjs);
+      };
+})();
+
+// js面向对象
+/*
+在js中,有对象,没有类(但有构造函数),
+因此,有人说js是"基于对象",而非面向对象.
+其实js的面向对象非常灵活,比起静态语法来,达到异想天开的效果.
+
+在很多语言中,类--->对象
+而在js中,对象不依赖于类而存在.
+这是第1个灵活的地方.(先有鸡还是先有蛋?)
+
+*/
+
+/*
+js的对象只是一个"属性字典", 就像PHP中的关联数组
+因此,我们可以直接造对象,不要类
+*/
+
+var ori = {};  // 地球上最原始的蛋白质, 这就是一个对象
+
+var c = {cell:1}; // 单细胞动物
+
+
+var chicken = {
+leg:2,
+song:function() {alert('我是一只小小鸟');}
+}
+
+
+console.log(ori,c,chicken);
+
+chicken.song();
+
+
+/*
+通过上面的例子,可以看出, js中的对象,不依赖于类而存在,
+可以直接生成的.
+{k:v,k:v} 这种格式声明的对象,称为 json格式的对象
+*/
+
+
+/*
+js的对象的属性,也是可以任意增添和删除的
+*/
+
+chicken.wine = 2;  // 增加2条翅膀
+console.log(chicken.wine);
+
+
+// 这只小鸡受到弹弓击打,不会唱歌了!
+delete chicken.song;
+
+console.log(chicken);
+
+
+
+/*
+总结:
+
+js中的对象,就是"一组属性与值的集合"
+属性可以任意增减
+
+方法和属性不必区分.
+*/
+
+
+/*
+闲谈:
+先有人 还是 先有人类?
+
+如果从造物主的角度讲, 脑子中,先构想"人类的形象",然后再造人
+先有类,再有对象. 如java,php,c++,先把类构思好,才能对象.
+
+
+如果从地球生物演化的角度讲,
+先有人,才有人类.
+
+因为,原本没有人,只有猴子.
+一个雷打下来, 某个猴子变异了,能站着走路,脑子也聪明了------
+总结这个猴子及其后代---->和普通猴不一样,把他们叫人类.
+
+
+
+其次: 在java,PHP中,通过类造的对象,所有的都一个模板,比如 能哭,会笑
+如果类改变了,所有对象的方法,都改变.
+这也不符合生物的规律
+
+因为,对象是以个体为单位的, cat1,cat2, 一个会爬树,一个不会.
+这个java,php中如何实现?
+
+在而js中, 就很自然
+
+cat1 = {climb:function(爬树)}
+
+cat2 = {} //没有爬树方法
+
+*/
+
+
+
+
+
+
