@@ -1,0 +1,50 @@
+/**
+ * Created by Administrator on 2016/7/28.
+ */
+"use strict"
+let str = 'sskkjjhhdsdjsssjdjdjskdsz';
+var newstr = str.split('').sort().join('');
+
+console.log(newstr);
+var ze = /(\w)\1*/g;
+let index = 0;
+let st = '';
+
+newstr.replace(ze,function($0,$1){
+;
+    if($0.length>index)
+    {
+        index = $0.length;
+        st = $1;
+    }
+
+});
+
+console.log("the longest word "+index +" num the word is "+st);
+function Foo(){
+
+}
+
+Foo.prototype.a = "fj";
+
+var af = new Foo();
+var bf = new Foo();
+
+console.log(af.a);
+console.log(bf.a);
+
+//
+function l(msg){
+    console.log(msg);
+}
+
+var sf = "wwwww2222www33";
+var hsd = /(^\d+(?=\w+)\w+$)|(^[a-zA-Z]+(?=\d+)\w+$)/;
+
+//只能是字符串和数字
+
+l(sf.match(hsd))
+l(hsd.test(sf));
+//数据类型指向当前的数据变化
+
+
