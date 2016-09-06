@@ -70,6 +70,6 @@ l(sf.match(hsd))
 l(hsd.test(sf));
 
 
-
+$dat = preg_match('/(?<=\[).*(?=\])/',$obj->ml,$d);
 
   
