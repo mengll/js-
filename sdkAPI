@@ -1,0 +1,170 @@
+/**
+ * Created by Administrator on 2017/3/15.
+ * author : menglingliang
+ * mail :1633094010@qq.com
+ */
+var sdkApi = {};
+sdkApi.config = {}; //set the base config
+//user account controller
+sdkApi.user = {};
+//create the tool for http
+sdkApi.tool = {};
+
+//create routers
+sdkApi.routers = {};
+sdkApi.routers.login = 'login'; //login action
+sdkApi.routers.register = 'register';
+sdkApi.routers.auth = 'auth';
+sdkApi.routers.bindMobile = 'bindMobile';
+sdkApi.routers.unbindMobile = 'unbindMobile';
+sdkApi.routers.sendSms = 'sendsms';
+sdkApi.routers.authMobileCode = 'authmobileCode';
+sdkApi.routers.getUserInfo = 'getUserInfo';
+
+sdkApi.config.baseurl = '';
+
+sdkApi.user.authData = function(data){
+    if(!sdkApi.tool.authUsername(data.username)) return false;
+    if(!sdkApi.tool.authPassword(data.password)) return false;
+    return true;
+};
+sdkApi.user.authMU = function(data){
+    if(!sdkApi.tool.authUsername(data.username)) return false;
+    if(!sdkApi.tool.authMobile(data.mobile)) return false;
+    return true;
+};
+//user login by username password
+sdkApi.user.login = function(data,func){
+    if(!sdkApi.user.authData(data)) return {"msg":"username or password is error","code":0};
+    //auth username password
+    sdkApi.tool.postHttpRequest(sdkApi.routers.login,data,function(data){
+        func(data); //CallBack function
+    });
+};
+//user register
+sdkApi.user.register = function(data,func){
+    if(!sdkApi.user.authData(data)) return {"msg":"username or password is error","code":0};
+    //auth username password
+    sdkApi.tool.postHttpRequest(sdkApi.routers.register,data,function(data){
+        func(data); //CallBack function
+    });
+};
+//user auth data {username,password}
+sdkApi.user.auth = function(data,func){
+    if(!sdkApi.user.authData(data)) return {"msg":"username or password is error","code":0};
+    //auth username password
+    sdkApi.tool.postHttpRequest(sdkApi.routers.auth,data,function(data){
+        func(data); //CallBack function
+    });
+};
+//create xmlhttp
+sdkApi.tool.createHttpRequest = function(){
+    if (window.ActiveXObject) {
+        return new ActiveXObject("Microsoft.XMLHTTP");
+    } else if (window.XMLHttpRequest) {
+        return new XMLHttpRequest();
+    }
+};
+//create get request
+sdkApi.tool.getRequest = function(url,func){
+    if(/http[s]?\:\\\\/.test(url)) return {"code":0,"msg":"url type error"};
+    var burl = sdkApi.config.baseurl+url;
+    var xmlHttp = sdkApi.tool.createHttpRequest();
+    xmlHttp.open("GET",burl,true);
+    xmlHttp.send(null);
+    xmlHttp.onreadystatechange = function() {
+        if ((xmlHttp.readyState == 4) && (xmlHttp.status == 200)) { //readyState the request complete
+            func.call(this, eval('(' + xmlHttp.responseText + ')')); // trance to json
+        }
+    }
+};
+//create post request
+sdkApi.tool.postHttpRequest = function(url,data,func){
+    if(/http[s]?\:\\\\/.test(url)) return {"code":0,"msg":"url type error"};
+    var xmlHttp = sdkApi.tool.createHttpRequest();
+    xmlHttp.open("POST",url);
+    xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+    xmlHttp.send(data);
+    xmlHttp.onreadystatechange = function() {
+        if ((xmlHttp.readyState == 4) && (xmlHttp.status == 200)) {
+            func.call(this, eval('(' + xmlHttp.responseText + ')')); // trance to json
+        }
+    }
+};
+// auth mobile
+sdkApi.tool.authMobile = function(mobile){
+    if(!(/^1[34578]\d{9}$/.test(mobile)))return false;
+    return true;
+};
+//auth username
+sdkApi.tool.authUsername = function (username) {
+    if(!/^[\w\_\-\.\@\:]{6,24}$/.test(username)) return false;
+    return true;
+};
+//auth user cardID
+sdkApi.tool.authCardId = function(cardid){
+    var isIDCard1=/^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$/;
+    var isIDCard2=/^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{4}$/;
+    if(isIDCard1.test(cardid) || isIDCard2.test(cardid)) return true;
+    return false;
+};
+//auth password
+sdkApi.tool.authPassword = function (password){
+    if(!/^\w{6,24}$/.test(password)) return {"code":0,"msg":"password type is error"};
+    return true;
+};
+
+//initlize
+sdkApi.init = function(conf){
+    sdkApi.config.baseurl = conf.url; //set the base request
+};
+
+//sendsms
+sdkApi.user.sendSms = function(mobile){
+    if(!sdkApi.tool.authMobile(mobile)) {
+        return {"code":0,"msg":"mobile type is error"};
+    }
+    sdkApi.tool.postHttpRequest(sdkApi.routers.sendSms,data,function(data){
+        func(data); //CallBack function
+    });
+};
+//auth code
+sdkApi.user.authMobileCode = function(mobile,code){
+    if(!sdkApi.tool.authMobile(mobile)) {
+        return {"code":0,"msg":"mobile type is error"};
+    }
+    if(!(/^\d{4,6}$/.test(code))) {
+        return {"code":0,"msg":"authcode type is error"};
+    }
+    //send http getrequest
+    sdkApi.tool.postHttpRequest(sdkApi.routers.authMobileCode,data,function(data){
+        func(data); //CallBack function
+    });
+};
+//bind phone
+sdkApi.user.bindMobile = function(data,func){
+    if(!sdkApi.user.authMU(data)) return {"msg":"username or mobile is error","code":0};
+    //send the bind request
+    sdkApi.tool.postHttpRequest(sdkApi.routers.bindMobile,data,function(data){
+        func(data); //CallBack function
+    });
+};
+//unbind Mobile
+sdkApi.user.unbindMobile = function(data){
+    if(!sdkApi.user.authMU(data)) return {"msg":"username or mobile is error","code":0};
+    sdkApi.tool.postHttpRequest(sdkApi.routers.unbindMobile,data,function(data){
+        func(data); //CallBack function
+    });
+};
+
+//get the user info message!
+sdkApi.user.getUserInfo = function(data,func){
+    if(!sdkApi.tool.authUsername(data.username)) return {"code":0,"msg":"username type is error"};
+    sdkApi.tool.postHttpRequest(sdkApi.routers.getUserInfo,data,function(data){
+        func(data); //CallBack function
+    });
+};
+
+//run init by self
+sdkApi.init({'baseurl':'http://adt.qcwan.com/'});
+//没啥卵用
