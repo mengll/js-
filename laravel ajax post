@@ -1,0 +1,16 @@
+    $.ajax({
+        method: 'post',
+        url: '/admin/auth',
+        data: dat,
+        async: true,
+        success: function(response){
+            alert('succes');
+            $('body').html(response) // or to the id/class you would like to change
+        },
+        error: function(data){
+            console.log(data);
+            alert("fail" + ' ' + this.data)
+        },
+
+    });
+    //ajax 传递参数的方式发生了改变
