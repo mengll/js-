@@ -1,0 +1,4 @@
+1 win + r  cmd
+2 sysdm.cpl  打开环境变量的配置的信息
+3 在系统的PATH 中配置 tsc所在的目录
+4 打开cmd 命令窗口 tsc 检查是否正确的安装
