@@ -1,0 +1,106 @@
+1)创建数据分析类的js的时候要使用php的方式导出一份，不然监控代码无法执行
+<?php
+
+    $gi = isset($_GET['gi']) && is_numeric($_GET['gi'])?$_GET['gi']:0;
+    $ci = isset($_GET['ci']) && is_numeric($_GET['ci'])?$_GET['ci']:0;
+    $pi = isset($_GET['pi']) && is_numeric($_GET['pi']) ?$_GET['pi']:0;
+
+
+    echo "(function () {
+    //创建自定义世界
+    var data = {};
+    var ispop = !1;
+    var mt = {};
+    mt.h = {};
+    data.rannum = function () {
+        var p =  Math.ceil(Math.random()*9999).toString();
+        var s = new Date().getTime().toString();
+        return p + s
+    };
+    mt.h.protocol = (\"https:\" === document.location.protocol )? \"https:\" : \"http:\";
+
+    mt.h.host = mt.h.protocol+'//htj.qcwan.com?l_o_g=advpage&';
+    mt.h.phost = mt.h.protocol+'//adt.qcwan.com/webpage?l_o_g=advpage&';
+
+    mt.h.gi = (typeof gameconfig != 'undefined' && /^\d*$/.test(gameconfig.gi)) ?gameconfig.gi:$gi;
+    mt.h.ci = (typeof gameconfig != 'undefined' && /^\d*$/.test(gameconfig.ci)) ?gameconfig.ci:$ci;
+    mt.h.pi = (typeof gameconfig != 'undefined' && /^\d*$/.test(gameconfig.pi)) ?gameconfig.pi:$pi;
+    mt.event = {};
+
+    data.pagekey = data.rannum();
+    data.url =  mt.h.host+'&ci='+ mt.h.ci+'&gi='+ mt.h.gi+'&pi='+mt.h.pi;
+    data.purl = mt.h.phost+'&ci='+ mt.h.ci+'&gi='+ mt.h.gi+'&pi='+mt.h.pi; //php请求地址
+
+    //数据格式转化
+    data.encode =encodeURIComponent;
+    data.newsend = function(url,tp){
+        try {
+            var c = [];
+            var e = window;
+            c.push(\"siteid=007\");
+            c.push(\"pi=\"    +    data.encode(mt.h.pi));
+            c.push(\"gi=\"    +    data.encode(mt.h.gi));
+            c.push(\"ci=\"    +       data.encode( mt.h.ci));
+            // c.push(\"page=\"  +     data.encode(e.location.href));
+            // c.push(\"agent=\" +    data.encode(e.navigator.userAgent));
+            c.push(\"tp=\"    + data.encode(tp));
+            c.push(\"rk=\"    + data.rannum());
+            (new Image).src = url + c.join(\"&\")
+        } catch (err) {
+            console.log(\"22->\"); //监测当前的页面的数据
+            console.log(err.message);
+        }
+    };
+    data.uptophp = function(tp){
+        var purl = \"http://adt.qcwan.com/webpage?\";
+        data.newsend(purl,tp)
+    };
+
+    //obj 对象 eventname 事件名 func 处理方法
+    mt.event.c = function(bj, eventname, func) {
+        obj = bj.item;
+        obj.attachEvent ? obj.attachEvent(\"on\" + eventname, function(eventname) {
+            func.call(obj, eventname)
+        }) : obj.addEventListener && obj.addEventListener(eventname, func, ispop)
+    };
+    mt.event.preventDefault = function(obj) {
+        obj.preventDefault ? obj.preventDefault() : obj.returnValue = ispop //冒泡的方式
+    }
+
+    //事件处理
+    function f(a) {
+        //获取当前数据对象
+        if (!(\"focus\" == a.type || \"blur\" == a.type) || !(a.target && a.target != window)){
+            console.log(a.type);
+        }
+        //  mt.event.preventDefault(a);
+        data.newsend(data.url,3);
+        data.uptophp(3)
+        //  k = \"focus\" == a.type || \"focusin\" == a.type ? r : u, console.log(\"This is the best!\")
+    }
+    //设置data
+    try {
+        var alist =  document.getElementsByTagName(\"a\");
+        var alen  = alist.length;
+        for (var i = 0;i < alen;i ++){
+            var item = alist[i];
+            var bj = {}; //截取当前对象
+            bj.click = item.getAttribute(\"onclick\");//获取当前对象的点击事件
+            bj.item = item;
+            item.onclick = null;
+            mt.event.c(bj,\"click\",f);
+        }
+    }catch (e){
+        console.log(e);
+    }
+    //初始化
+    (function(){
+        data.newsend(data.url,1);
+        // data.sendDat(data.purl,null,1);
+        data.uptophp(1)
+    })();
+
+})();
+"
+
+?>
